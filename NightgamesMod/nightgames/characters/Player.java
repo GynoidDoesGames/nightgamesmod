@@ -832,8 +832,12 @@ public class Player extends Character {
     }
 
     @Override
-    public String nameDirectObject() {
-        return "you";
+    public String nameDirectObject(boolean talkingToOthers) {
+        if (talkingToOthers){
+            return super.nameDirectObject(true);
+        } else {
+            return "you";
+        }
     }
 
     @Override
@@ -842,43 +846,75 @@ public class Player extends Character {
     }
 
     @Override
-    public String nameOrPossessivePronoun() {
-        return "your";
+    public String nameOrPossessivePronoun(boolean talkingToOthers) {
+        if (talkingToOthers){
+            return super.nameOrPossessivePronoun(true);
+        } else {
+            return "your";
+        }
     }
 
     @Override
-    public String possessiveAdjective() {
-        return "your";
+    public String possessiveAdjective(boolean talkingToOthers) {
+        if (talkingToOthers){
+            return super.possessiveAdjective(true);
+        } else {
+            return "your";
+        }
     }
     
     @Override
-    public String possessivePronoun() {
-        return "yours";
+    public String possessivePronoun(boolean talkingToOthers) {
+        if (talkingToOthers){
+            return super.possessivePronoun(true);
+        } else {
+            return "yours";
+        }
     }
 
     @Override
-    public String reflectivePronoun() {
-        return "yourself";
+    public String reflectivePronoun(boolean talkingToOthers) {
+        if (talkingToOthers){
+            return super.reflectivePronoun(true);
+        } else {
+            return "yourself";
+        }
     }
 
     @Override
-    public String subject() {
-        return "you";
+    public String subject(boolean talkingToOthers) {
+        if (talkingToOthers){
+            return super.subject(true);
+        } else {
+            return "you";
+        }
     }
 
     @Override
-    public String subjectWas() {
-        return subject() + " were";
+    public String subjectWas(boolean talkingToOthers) {
+        if (talkingToOthers){
+            return super.subjectWas(true);
+        } else {
+            return subject() + " were";
+        }
     }
 
     @Override
-    public String pronoun() {
-        return "you";
+    public String pronoun(boolean talkingToOthers) {
+        if (talkingToOthers){
+            return super.pronoun(true);
+        } else {
+            return "you";
+        }
     }
 
     @Override
-    public String directObject() {
-        return "you";
+    public String directObject(boolean talkingToOthers) {
+        if (talkingToOthers){
+            return super.directObject(true);
+        } else {
+            return "you";
+        }
     }
 
     @Override

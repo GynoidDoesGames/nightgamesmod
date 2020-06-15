@@ -582,8 +582,12 @@ public abstract class Character extends Observable implements Cloneable {
         stamina.restore(i);
     }
 
-    public String subject() {
+    public String subject(boolean talkingToOthers) {
         return getName();
+    }
+    
+    public String subject() {
+        return subject(false);
     }
 
     public int pleasure(int i, Combat c, Character source) {
@@ -768,8 +772,12 @@ public abstract class Character extends Observable implements Cloneable {
         return subjectAction(verb, ProseUtils.getThirdPersonFromFirstPerson(verb));
     }
 
-    public String subjectWas() {
+    public String subjectWas(boolean talkingToOthers) {
         return subject() + " was";
+    }
+
+    public String subjectWas() {
+        return subjectWas(false);
     }
 
     public void tempt(int i) {
@@ -3262,8 +3270,13 @@ public abstract class Character extends Observable implements Cloneable {
         return fit;
     }
 
-    public String nameOrPossessivePronoun() {
+    public String nameOrPossessivePronoun(boolean talkingToOthers) {
         return getName() + "'s";
+    }
+    
+    public String nameOrPossessivePronoun()
+    {
+        return nameOrPossessivePronoun(false);
     }
 
     public double getExposure(ClothingSlot slot) {
@@ -3291,7 +3304,7 @@ public abstract class Character extends Observable implements Cloneable {
         update();
     }
 
-    public String pronoun() {
+    public String pronoun(boolean talkingToOthers) {
         if (useFemalePronouns()) {
             return "she";
         } else {
@@ -3299,19 +3312,27 @@ public abstract class Character extends Observable implements Cloneable {
         }
     }
 
+    public String pronoun() {
+        return pronoun(false);
+    }
+
     public Emotion getMood() {
         return Emotion.confident;
     }
 
-    public String possessiveAdjective() {
+    public String possessiveAdjective(boolean talkingToOthers) {
         if (useFemalePronouns()) {
             return "her";
         } else {
             return "his";
         }
     }
+
+    public String possessiveAdjective() {
+        return possessiveAdjective(false);
+    }
     
-    public String possessivePronoun() {
+    public String possessivePronoun(boolean talkingToOthers) {
         if (useFemalePronouns()) {
             return "hers";
         } else {
@@ -3319,12 +3340,20 @@ public abstract class Character extends Observable implements Cloneable {
         }
     }
 
-    public String directObject() {
+    public String possessivePronoun() {
+        return possessivePronoun(false);
+    }
+    
+    public String directObject(boolean talkingToOthers) {
         if (useFemalePronouns()) {
             return "her";
         } else {
             return "him";
         }
+    }
+
+    public String directObject() {
+        return directObject(false);
     }
 
     public boolean useFemalePronouns() {
@@ -3336,11 +3365,15 @@ public abstract class Character extends Observable implements Cloneable {
                         || (!human() && Flag.checkFlag(Flag.NPCFemalePronounsOnly));
     }
 
-    public String nameDirectObject() {
+    public String nameDirectObject(boolean talkingToOthers) {
         return getName();
     }
 
-    public String reflectivePronoun() {
+    public String nameDirectObject() {
+        return nameDirectObject(false);
+    }
+
+    public String reflectivePronoun(boolean talkingToOthers) {
         String self = possessiveAdjective() + "self";
         if (self.equals("hisself")) {
             // goddammit english.
@@ -3348,6 +3381,10 @@ public abstract class Character extends Observable implements Cloneable {
         } else {
             return self;
         }
+    }
+
+    public String reflectivePronoun() {
+        return reflectivePronoun(false);
     }
 
     public boolean clothingFuckable(BodyPart part) {
@@ -3535,7 +3572,7 @@ public abstract class Character extends Observable implements Cloneable {
     public String manOrWoman() {
         return useFemalePronouns() ? "woman" : "man";
     }
-
+    
     public boolean isDemonic() {
         return has(Trait.succubus) || body.get("pussy").stream()
                         .anyMatch(part -> part.moddedPartCountsAs(this, DemonicMod.INSTANCE)) || body.get("cock")
