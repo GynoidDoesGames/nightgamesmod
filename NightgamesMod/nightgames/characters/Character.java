@@ -3528,6 +3528,14 @@ public abstract class Character extends Observable implements Cloneable {
         return useFemalePronouns() ? "girl" : "boy";
     }
 
+    public String guyOrGal() {
+        return useFemalePronouns() ? "gal" : "guy";
+    }
+
+    public String manOrWoman() {
+        return useFemalePronouns() ? "woman" : "man";
+    }
+
     public boolean isDemonic() {
         return has(Trait.succubus) || body.get("pussy").stream()
                         .anyMatch(part -> part.moddedPartCountsAs(this, DemonicMod.INSTANCE)) || body.get("cock")
