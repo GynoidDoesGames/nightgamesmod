@@ -386,10 +386,11 @@ public class Combat extends Observable implements Cloneable {
     private void doEndOfTurnUpkeep() {
         p1.eot(this, p2);
         p2.eot(this, p1);
+        getStance().decay(this);
+        Optional<Position> newPosition = getStance().checkOngoing(this);
+        newPosition.ifPresent(this::setStance);
         otherCombatants.removeAll(defeatedPets);
         defeatedPets.clear();
-        getStance().decay(this);
-        getStance().checkOngoing(this);
         // iterate through all the pets here so we don't get concurrent modification issues
         List<PetCharacter> pets = new ArrayList<>(otherCombatants);
         pets.forEach(other -> {
@@ -1311,7 +1312,7 @@ public class Combat extends Observable implements Cloneable {
         getCombatantData(p1).getRemovedItems().forEach(p1::gain);
         getCombatantData(p2).getRemovedItems().forEach(p2::gain);
 
-        GameState.getGameState().characterPool.otherCombatants = null;
+        GameState.getGameState().characterPool.combatEnd();
 
         location.endEncounter();
         p1.spendXP();
@@ -1363,8 +1364,8 @@ public class Combat extends Observable implements Cloneable {
         Combat c = (Combat) super.clone();
         c.p1 = p1.clone();
         c.p2 = p2.clone();
-        c.p1.finishClone(c.p2);
-        c.p2.finishClone(c.p1);
+        c.p1.cloneStatuses(c.p2);
+        c.p2.cloneStatuses(c.p1);
         c.combatantData = new HashMap<>();
         combatantData.forEach((name, data) -> c.combatantData.put(name, (CombatantData) data.clone()));
         c.stance = getStance().clone();
@@ -1690,6 +1691,10 @@ public class Combat extends Observable implements Cloneable {
         return otherCombatants.stream().map(PetCharacter::getType).collect(Collectors.toList());
     }
 
+    public boolean isPetDefeated(PetCharacter pet) {
+        return defeatedPets.contains(pet);
+    }
+
     public boolean isEnded() {
         return phase == CombatPhase.FINISHED_SCENE || phase == CombatPhase.ENDED;
     }
@@ -1730,10 +1735,11 @@ public class Combat extends Observable implements Cloneable {
             delayCounter--;
             return;
         }
+
         if (phase == CombatPhase.START) {
             startScene();
         }
-        GameState.getGameState().characterPool.setOtherCombatants(this.otherCombatants);
+        GameState.getGameState().characterPool.combatStart(this);
         while (!finished) {
             boolean pause = false;
             if (!cloned && isBeingObserved()) {

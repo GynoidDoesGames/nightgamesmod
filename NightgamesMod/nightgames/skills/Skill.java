@@ -42,10 +42,6 @@ public abstract class Skill {
         tags = new HashSet<>();
     }
 
-    public static boolean skillIsUsable(Combat c, Skill s, Character user) {
-        return skillIsUsable(c, s, user, null);
-    }
-
     public static boolean skillIsUsable(Combat c, Skill skill, Character user, Character target) {
         if (target == null) {
             target = skill.getDefaultTarget(c, user);
@@ -62,15 +58,12 @@ public abstract class Skill {
                         && !modifierRestricted;
     }
 
-    public static boolean skillIsUsable(Combat c, SkillUsage usage) {
+    public static boolean skillIsUsable(Combat c, SkillUsage<Skill> usage) {
         return skillIsUsable(c, usage.skill, usage.user, usage.target);
     }
 
     public abstract boolean requirements(Combat c, Character user, Character target);
 
-    public static void filterAllowedSkills(Combat c, Collection<Skill> skills, Character user) {
-        filterAllowedSkills(c, skills, user, null);
-    }
     public static void filterAllowedSkills(Combat c, Collection<Skill> skills, Character user, Character target) {
         boolean filtered = false;
         Set<Skill> stanceSkills = new HashSet<>(c.getStance().availSkills(c, user));
@@ -82,7 +75,7 @@ public abstract class Skill {
         Set<Skill> availSkills = new HashSet<>();
         for (Status st : user.status) {
             for (Skill sk : st.allowedSkills(c)) {
-                if ((target != null && skillIsUsable(c, sk, user, target)) || skillIsUsable(c, sk, user)) {
+                if (skillIsUsable(c, sk, user, target)) {
                     availSkills.add(sk);
                 }
             }
@@ -92,19 +85,15 @@ public abstract class Skill {
             filtered = true;
         }
         Set<Skill> noReqs = new HashSet<>();
-        if (!filtered) {
-            // if the skill is restricted by status/stance, do not check for
-            // requirements
-            for (Skill sk : skills) {
-                if (sk.getTags(c, user).contains(SkillTag.mean) && user.has(Trait.softheart)) {
-                    continue;
-                }
-                if (!sk.requirements(c, user, target != null? target : sk.getDefaultTarget(c, user))) {
-                    noReqs.add(sk);
-                }
+        for (Skill sk : skills) {
+            if (sk.getTags(c, user).contains(SkillTag.mean) && user.has(Trait.softheart)) {
+                continue;
             }
-            skills.removeAll(noReqs);
+            if (!sk.requirements(c, user, target != null? target : sk.getDefaultTarget(c, user))) {
+                noReqs.add(sk);
+            }
         }
+        skills.removeAll(noReqs);
     }
 
     public int getMojoBuilt(Combat c, Character user) {
@@ -282,6 +271,14 @@ public abstract class Skill {
         return getTags(c, user, c.getOpponent(user));
     }
 
+    /**
+     * Returns an read-only set of the skill's tags.
+     *
+     * @param c The current combat, if applicable.
+     * @param user The user of the skill.
+     * @param target The target of the skill.
+     * @return An unmodifiable set of the tags associated with a usage of this skill.
+     */
     public Set<SkillTag> getTags(Combat c, Character user, Character target) {
         return Collections.unmodifiableSet(tags);
     }
