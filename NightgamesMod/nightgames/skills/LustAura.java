@@ -41,7 +41,7 @@ public class LustAura extends Skill {
     public boolean resolve(Combat c, Character user, Character target, boolean rollSucceeded) {
         user.arouse(10, c);
         writeOutput(c, Result.normal, user, target);
-        target.add(c, Horny.getWithPsychologicalType(user, target, (float) (3 + 2 * user.getExposure()), 3 + Random
+        target.add(c, Horny.getWithPsychologicalType(user, target, (float)(3 + 2 * user.getExposure()), 3 + Random
                                         .random(3),
                         user.nameOrPossessivePronoun() + " aura of lust"));
         target.emote(Emotion.horny, 10);
